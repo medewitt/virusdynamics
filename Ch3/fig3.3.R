@@ -35,6 +35,9 @@ out <- ode(init, t, base_ode, params)
 
 out_df <- as_tibble(as.data.frame(out))
 
+# Funny side note is that the differences in the scales
+# are almost immediately reproduced as in the book
+
 p <- out_df %>% 
 	setNames(c("time", "Uninfected Cells", 
 						 "Infected Cells", "Free Virus")) %>% 
