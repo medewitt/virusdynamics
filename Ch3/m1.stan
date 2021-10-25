@@ -25,3 +25,15 @@ data {
   vector[3] y0;
 
 }
+
+parameters{
+	
+}
+
+model{
+	
+}
+
+generated quantities{
+	
+}
