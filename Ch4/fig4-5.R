@@ -68,16 +68,17 @@ p <- out_df %>%
                               compartment_names)) %>% 
   ggplot(aes(time, y = value))+
   geom_line()+
-  facet_grid(rows = vars(compartment),scales = "free_y")+
+  facet_wrap(~compartment, ncol = 1,scales = "free_y")+
   theme_classic()+
   labs(
     title = "Viral Dynamics of Primary Phase of HIV or SIV Infection",
     x = "Days",
     y = "Count"
   )+
-  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))
+  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))+
+  theme(strip.background = element_blank())
 
 p	
 
-cowplot::save_plot(filename = here::here("Ch3", "Figure3-3.png"),
+cowplot::save_plot(filename = here::here("Ch4", "Figure4-5.png"),
                    plot = p)
