@@ -1,0 +1,9 @@
+# Preface {.unnumbered}
+
+This represents an attempt to write reproduce the code from "Virus Dynamics: Mathematical Principles of Immunology and Virology" by Nowak and May.
+
+No guarantees that anything in this is correct, but just an attempt to reproduce what is in the book.
+
+This book is written in Rmarkdown and rendered using the phenomenal Quarto engine.
+
+To learn more about Quarto books visit <https://quarto.org/docs/books>.

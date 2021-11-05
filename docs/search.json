@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Virus Dynamics in R",
+    "section": "",
+    "text": "Preface\nThis represents an attempt to write reproduce the code from “Virus Dynamics: Mathematical Principles of Immunology and Virology” by Nowak and May.\nNo guarantees that anything in this is correct, but just an attempt to reproduce what is in the book.\nThis book is written in Rmarkdown and rendered using the phenomenal Quarto engine.\nTo learn more about Quarto books visit https://quarto.org/docs/books."
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "This is a book created from markdown and executable code."
+  },
+  {
+    "objectID": "ch3.html",
+    "href": "ch3.html",
+    "title": "2  The Basic Model of Virus Dynamics",
+    "section": "",
+    "text": "library(deSolve)\nlibrary(tidyverse)\n\nSet Up the ODE\n\nbase_ode <- function(time, state, parameters){\n    with(as.list(c(state, parameters)),{\n        \n        dx <- lambda - d*x - beta * x * v\n        dy <- beta * x * v - a * y\n        dv <- k * y - u * v\n        \n        return(list(c(dx,dy,dv)))\n    })\n    \n}\n\nt <- seq(0,30,.1)\n\nparams <- c(\n    lambda =1e5,# Uninfected cell production rate\n    d = .1, # Cell Death Rate\n    a = .5, # Infected Cell Death Rate\n    beta = 2e-7, # \"Rate Constant\"\n    k = 100, # Virus productin from Infected cell\n    u = 5 # Free Virus lifestapn\n)\n\nGuessing Initial values from a graph\n\nx0 <- params[\"lambda\"][1]/params[\"d\"][1]\ninit <- c(x = unname(x0), \n                    y = 1, v = 1)\n\nout <- ode(init, t, base_ode, params)\n\nout_df <- as_tibble(as.data.frame(out))\n\nFunny side note is that the differences in the scales are almost immediately reproduced as in the book.\n\ncompartment_names <- c(\"Uninfected Cells\",\n\"Infected Cells\",\n\"Free Virus\")\n\np <- out_df %>% \n    setNames(c(\"time\", compartment_names)) %>% \n    gather(compartment, value, -time) %>% \n    mutate(compartment = factor(compartment, compartment_names)) %>% \n    ggplot(aes(time, y = value))+\n    geom_line()+\n    facet_grid(rows = vars(compartment),scales = \"free_y\")+\n    theme_classic()+\n    labs(\n        title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n        x = \"Days\",\n        y = \"Count\"\n    )+\n    scale_y_continuous(labels = scales::comma_format(accuracy = 1000))\n\np"
+  },
+  {
+    "objectID": "ch4.html#set-up-the-ode",
+    "href": "ch4.html#set-up-the-ode",
+    "title": "3  Anti-viral Drug Therapy",
+    "section": "3.1 Set Up the ODE",
+    "text": "Represents infected cells becoming:\n\nLatently infected: do not produce new virions, but contain replication competent virus that can be re-activated to become virus producing\nlong-lived chronic producers: produce small amounts of virus over long periods\ncells which harbor defective provirus\n\n\nbase_ode <- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    \n    dx <- lambda - d*x - beta * x * v\n    dy1 <- q1*beta * x * v - a1 * y1 + alpha * y2\n    dy2 <- q2*beta * x * v - a2 * y2 - alpha * y2\n    dy3 <- q3*beta * x * v - a3 * y3\n    dv <- k * y1 - u * v\n    \n    return(list(c(dx, dy1, dy2, dy3, dv)))\n  })\n  \n}\n\n\nt <- seq(0,30,.1)\n\nparams <- c(\n  lambda =1e7,# Uninfected cell production rate\n  d = .1, # Cell Death Rate\n  a1 = .5, # Infected Cell Death Rate\n  a2 = .01, # Infected Cell Death Rate\n  a3 = .008, # Infected Cell Death Rate\n  beta = 5e-10, # \"Rate Constant\"\n  alpha = .3, # Virus Production rate of reactivated latent\n  k = 500, # Virus productin from Infected cell\n  u = 5, # Free Virus lifestapn\n  q1 = .55, # P(Infected State | Infected)\n  q2 = .05, # P(Latent State | Infected)\n  q3 = .4 # P(Defective Provirus | Infected)\n)\n\n#' Guessing Initial values from a graph\nx0 <- params[\"lambda\"][1]/params[\"d\"][1]\ninit <- c(x = unname(x0), \n          y1 = 1,y2=0,y3=0, v = 1)\n\nout <- ode(init, t, base_ode, params)\n\nout_df <- as_tibble(as.data.frame(out))\n\nFunny side note is that the differences in the scales are almost immediately reproduced as in the book.\n\ncompartment_names <- c(\"Uninfected Cells\", \n\"Actively Infected Cells\", \n\"Latently Infected Cells\",\n\"Cells Infected with Defective Virus\",\n\"Free Virus\")\n\np <- out_df %>% \n  setNames(c(\"time\", compartment_names)) %>% \n  gather(compartment, value, -time) %>% \n  mutate(compartment = factor(compartment,\n                              compartment_names)) %>% \n  ggplot(aes(time, y = value))+\n  geom_line()+\n  facet_wrap(~compartment, ncol = 1,scales = \"free_y\")+\n  theme_classic()+\n  labs(\n    title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n    x = \"Days\",\n    y = \"Count\"\n  )+\n  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))+\n  theme(strip.background = element_blank())\n\np"
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "4  Summary",
+    "section": "",
+    "text": "In summary, there will be more to come."
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": ""
+  }
+]

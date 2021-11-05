@@ -1,0 +1,26 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Virus Dynamics in R"
+  author: "Michael DeWitt"
+  date: "11/5/2021"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - ch3.qmd
+    - ch4.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: flatly
+  pdf:
+    documentclass: scrreport
+
+
+
