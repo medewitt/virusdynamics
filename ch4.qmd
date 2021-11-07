@@ -18,6 +18,27 @@ Represents infected cells becoming:
 * long-lived chronic producers: produce small amounts of virus over long periods 
 * cells which harbor defective provirus
 
+These dynamics can be represented by the below equations:
+
+$$
+\frac{dx}{dt} = \lambda - dx - \beta x v \\
+$$
+$$
+\frac{dy_1}{dt} = q_1 \beta x v-a_1y_1+\alpha y_2 \\
+$$
+$$
+\frac{dy_2}{dt} = q_2 \beta x v-a_2y_2-\alpha y_2 \\
+$$
+$$
+\frac{dy_3}{dt} = q_3 \beta x v-a_3y_3 \\
+$$
+$$
+\frac{dv}{dt} = k y_1 - u v
+$$
+
+
+These equations can then be coded as follows:
+
 ```{r}
 base_ode <- function(time, state, parameters){
   with(as.list(c(state, parameters)),{
@@ -33,6 +54,8 @@ base_ode <- function(time, state, parameters){
   
 }
 ```
+
+Now we can set up the initial conditions and constants to simulate the outputs from this system of equations.
 
 ```{r}
 t <- seq(0,30,.1)
@@ -91,3 +114,68 @@ p <- out_df %>%
 p	
 
 ```
+
+### Equilibrium Conditions
+
+
+$$
+\hat{x} = \frac{x_0}{R_0} \\
+$$
+$$
+\hat{y_1} = (R_0-1)\frac{du}{\beta k} = \hat{v}\frac{u}{k} \\
+$$
+$$
+\hat{y_2}=\frac{\hat{y_1}\frac{a_1}{q_1}}{\frac{\alpha +a_2}{q_2}+\frac{\alpha}{q_1}}\\
+$$
+$$
+\hat{y_3} = \hat{y_2} \frac{\frac{\alpha + a_2}{q_2}}{\frac{a_3}{q_3}}\\
+$$
+$$
+\hat{v} = (R_0-1)\frac{d}{\beta}
+$$
+
+
+With $R_0$ given by:
+
+$$
+R_0 = \frac{\beta \lambda \ k}{a_1du}(q_1+q_2 \frac{\alpha}{\alpha + a_2})
+$$
+
+## Effect of Anti-Virals
+
+The big take-away from these equations is that introduction of an anti-viral should reduce the contact rate, $\beta$, to zero (or some much lower value).
+
+```{r}
+params["beta"] <- 0
+
+init <- c(x = unname(x0), 
+          y1 = 1000,y2=1000,y3=10000, v = 50)
+
+out_antiviral <- ode(init, t, base_ode, params)
+
+out_df_av <- as_tibble(as.data.frame(out_antiviral))
+
+```
+
+```{r}
+p <- out_df_av %>% 
+  setNames(c("time", compartment_names)) %>% 
+  gather(compartment, value, -time) %>% 
+  mutate(compartment = factor(compartment,
+                              compartment_names)) %>% 
+  ggplot(aes(time, y = value))+
+  geom_line()+
+  facet_wrap(~compartment, ncol = 1,scales = "free_y")+
+  theme_classic()+
+  labs(
+    title = "Viral Dynamics of Primary Phase of HIV or SIV Infection",
+    subtitle = "With Anti-viral therapy",
+    x = "Days",
+    y = "Count"
+  )+
+  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))+
+  theme(strip.background = element_blank())
+
+p	
+```
+

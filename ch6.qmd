@@ -1,0 +1,45 @@
+# Dynamics of Immune Response
+
+May and Nowak argue that:
+
+(@) virus load in an important determinant of disease
+(@) immune responses limit virus load
+(@) individual variation in immune responsiveness accounts for much of the observed variation in the outcome of a disease
+
+## Predatory Prey Dynamics of the Immune System
+
+$$
+\frac{dx}{dt} = \lambda - dx - \beta x v 
+$$
+$$
+\frac{dy}{dt} = \beta x v - ay - pyz \\
+$$
+$$
+\frac{dv}{dt} = ky - uv
+$$
+$$
+\frac{dz}{dt} = c -bz \\
+$$
+
+With the basic reproduction number defined for this system as 
+
+$$
+R_0 = \frac{\beta \lambda k}{adu}
+$$
+
+And the basic reproduction number in the presence of an immune response (CTL)
+
+$$
+R_1 = \frac{\beta \lambda k}{(a +a')du}
+$$
+
+Where:
+
+$$
+a' = \frac{cp}{b}
+$$
+
+representing the rate at which infected cells are eliminated by the CTL response at equilibrium.
+
+If R1 <1 then the infection will clear.
+The virus may spread initially, but once the immune response is activated, each infected cell will on average give rise to less than one newly infected cell and thus the infection will die out.

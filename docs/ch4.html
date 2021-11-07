@@ -76,6 +76,7 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -86,7 +87,7 @@
   <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
   <script src="site_libs/quarto-search/fuse.min.js"></script>
   <script src="site_libs/quarto-search/quarto-search.js"></script>
-  <link href="./summary.html" rel="next">
+  <link href="./ch5.html" rel="next">
   <link href="./ch3.html" rel="prev">
   <script src="site_libs/quarto-html/quarto.js"></script>
   <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -149,7 +150,13 @@
   <a href="./ch4.html" class="active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Anti-viral Drug Therapy</span></a>
 </li>
       <li class="sidebar-item">
-  <a href="./summary.html" class=""><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./ch5.html" class=""><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dynamics of Hepatitis B Virus</span></a>
+</li>
+      <li class="sidebar-item">
+  <a href="./ch6.html" class=""><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dynamics of Immune Response</span></a>
+</li>
+      <li class="sidebar-item">
+  <a href="./summary.html" class=""><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Summary</span></a>
 </li>
       <li class="sidebar-item">
   <a href="./references.html" class="">References</a>
@@ -161,7 +168,11 @@
     <nav id="TOC" role="doc-toc" class="sidebar sidebar-toc">
 <h2 id="toc-title">On this page</h2>
 <ul>
-<li><a href="#set-up-the-ode" class="nav-link active" data-scroll-target="#set-up-the-ode"> <span class="header-section-number">3.1</span> Set Up the ODE</a></li>
+<li><a href="#set-up-the-ode" class="nav-link active" data-scroll-target="#set-up-the-ode"> <span class="header-section-number">3.1</span> Set Up the ODE</a>
+<ul class="collapse">
+<li><a href="#equilibrium-conditions" class="nav-link" data-scroll-target="#equilibrium-conditions"> <span class="header-section-number">3.1.1</span> Equilibrium Conditions</a></li>
+</ul></li>
+<li><a href="#effect-of-anti-virals" class="nav-link" data-scroll-target="#effect-of-anti-virals"> <span class="header-section-number">3.2</span> Effect of Anti-Virals</a></li>
 </ul>
 </nav>
 <!-- main -->
@@ -183,6 +194,19 @@
 <li>long-lived chronic producers: produce small amounts of virus over long periods</li>
 <li>cells which harbor defective provirus</li>
 </ul>
+<p>These dynamics can be represented by the below equations:</p>
+<p><span class="math display">\[
+\frac{dx}{dt} = \lambda - dx - \beta x v \\
+\]</span> <span class="math display">\[
+\frac{dy_1}{dt} = q_1 \beta x v-a_1y_1+\alpha y_2 \\
+\]</span> <span class="math display">\[
+\frac{dy_2}{dt} = q_2 \beta x v-a_2y_2-\alpha y_2 \\
+\]</span> <span class="math display">\[
+\frac{dy_3}{dt} = q_3 \beta x v-a_3y_3 \\
+\]</span> <span class="math display">\[
+\frac{dv}{dt} = k y_1 - u v
+\]</span></p>
+<p>These equations can then be coded as follows:</p>
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>base_ode <span class="ot">&lt;-</span> <span class="cf">function</span>(time, state, parameters){</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(<span class="fu">as.list</span>(<span class="fu">c</span>(state, parameters)),{</span>
@@ -198,6 +222,7 @@
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Now we can set up the initial conditions and constants to simulate the outputs from this system of equations.</p>
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">30</span>,.<span class="dv">1</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -253,6 +278,62 @@
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>p   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="ch4_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="equilibrium-conditions" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="equilibrium-conditions"><span class="header-section-number">3.1.1</span> Equilibrium Conditions</h3>
+<p><span class="math display">\[
+\hat{x} = \frac{x_0}{R_0} \\
+\]</span> <span class="math display">\[
+\hat{y_1} = (R_0-1)\frac{du}{\beta k} = \hat{v}\frac{u}{k} \\
+\]</span> <span class="math display">\[
+\hat{y_2}=\frac{\hat{y_1}\frac{a_1}{q_1}}{\frac{\alpha +a_2}{q_2}+\frac{\alpha}{q_1}}\\
+\]</span> <span class="math display">\[
+\hat{y_3} = \hat{y_2} \frac{\frac{\alpha + a_2}{q_2}}{\frac{a_3}{q_3}}\\
+\]</span> <span class="math display">\[
+\hat{v} = (R_0-1)\frac{d}{\beta}
+\]</span></p>
+<p>With <span class="math inline">\(R_0\)</span> given by:</p>
+<p><span class="math display">\[
+R_0 = \frac{\beta \lambda \ k}{a_1du}(q_1+q_2 \frac{\alpha}{\alpha + a_2})
+\]</span></p>
+</section>
+</section>
+<section id="effect-of-anti-virals" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="effect-of-anti-virals"><span class="header-section-number">3.2</span> Effect of Anti-Virals</h2>
+<p>The big take-away from these equations is that introduction of an anti-viral should reduce the contact rate, <span class="math inline">\(\beta\)</span>, to zero (or some much lower value).</p>
+<div class="cell">
+<div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>params[<span class="st">"beta"</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>init <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="fu">unname</span>(x0), </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">y1 =</span> <span class="dv">1000</span>,<span class="at">y2=</span><span class="dv">1000</span>,<span class="at">y3=</span><span class="dv">10000</span>, <span class="at">v =</span> <span class="dv">50</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>out_antiviral <span class="ot">&lt;-</span> <span class="fu">ode</span>(init, t, base_ode, params)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>out_df_av <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(<span class="fu">as.data.frame</span>(out_antiviral))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> out_df_av <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">"time"</span>, compartment_names)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(compartment, value, <span class="sc">-</span>time) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">compartment =</span> <span class="fu">factor</span>(compartment,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                              compartment_names)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time, <span class="at">y =</span> value))<span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>compartment, <span class="at">ncol =</span> <span class="dv">1</span>,<span class="at">scales =</span> <span class="st">"free_y"</span>)<span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Viral Dynamics of Primary Phase of HIV or SIV Infection"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"With Anti-viral therapy"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Days"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count"</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">+</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">comma_format</span>(<span class="at">accuracy =</span> <span class="dv">1000</span>))<span class="sc">+</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.background =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>p   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ch4_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
@@ -342,8 +423,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./summary.html">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ch5.html">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dynamics of Hepatitis B Virus</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

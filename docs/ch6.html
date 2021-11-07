@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="quarto-0.2.251">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Virus Dynamics in R - References</title>
+  <title>Virus Dynamics in R - 5&nbsp; Dynamics of Immune Response</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -11,27 +11,9 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
-    div.csl-bib-body { }
-    div.csl-entry {
-      clear: both;
-    }
-    .hanging div.csl-entry {
-      margin-left:2em;
-      text-indent:-2em;
-    }
-    div.csl-left-margin {
-      min-width:2em;
-      float:left;
-    }
-    div.csl-right-inline {
-      margin-left:2em;
-      padding-left:1em;
-    }
-    div.csl-indent {
-      margin-left: 2em;
-    }
   </style>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -42,7 +24,8 @@
   <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
   <script src="site_libs/quarto-search/fuse.min.js"></script>
   <script src="site_libs/quarto-search/quarto-search.js"></script>
-  <link href="./summary.html" rel="prev">
+  <link href="./summary.html" rel="next">
+  <link href="./ch5.html" rel="prev">
   <script src="site_libs/quarto-html/quarto.js"></script>
   <script src="site_libs/quarto-html/popper.min.js"></script>
   <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -66,7 +49,7 @@
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">References</h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dynamics of Immune Response</span></h1>
       <button type="button" class="quarto-btn-toggle btn">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -107,29 +90,64 @@
   <a href="./ch5.html" class=""><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dynamics of Hepatitis B Virus</span></a>
 </li>
       <li class="sidebar-item">
-  <a href="./ch6.html" class=""><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dynamics of Immune Response</span></a>
+  <a href="./ch6.html" class="active"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dynamics of Immune Response</span></a>
 </li>
       <li class="sidebar-item">
   <a href="./summary.html" class=""><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Summary</span></a>
 </li>
       <li class="sidebar-item">
-  <a href="./references.html" class="active">References</a>
+  <a href="./references.html" class="">References</a>
 </li>
   </ul>
   </div>
 </nav>
 <!-- toc -->
-    <div id="quarto-toc-sidebar" class="sidebar sidebar-toc"></div>
+    <nav id="TOC" role="doc-toc" class="sidebar sidebar-toc">
+<h2 id="toc-title">On this page</h2>
+<ul>
+<li><a href="#predatory-prey-dynamics-of-the-immune-system" class="nav-link active" data-scroll-target="#predatory-prey-dynamics-of-the-immune-system"> <span class="header-section-number">5.1</span> Predatory Prey Dynamics of the Immune System</a></li>
+</ul>
+</nav>
 <!-- main -->
 <main class="content">
 <header id="title-block-header">
-<h1 class="title d-none d-lg-block display-7">References</h1>
+<h1 class="title d-none d-lg-block display-7"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dynamics of Immune Response</span></h1>
 </header>
-<div id="refs" role="doc-bibliography" style="display: none">
 
-</div>
+<p>May and Nowak argue that:</p>
+<ol class="example" type="1">
+<li>virus load in an important determinant of disease</li>
+<li>immune responses limit virus load</li>
+<li>individual variation in immune responsiveness accounts for much of the observed variation in the outcome of a disease</li>
+</ol>
+<section id="predatory-prey-dynamics-of-the-immune-system" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="predatory-prey-dynamics-of-the-immune-system"><span class="header-section-number">5.1</span> Predatory Prey Dynamics of the Immune System</h2>
+<p><span class="math display">\[
+\frac{dx}{dt} = \lambda - dx - \beta x v 
+\]</span> <span class="math display">\[
+\frac{dy}{dt} = \beta x v - ay - pyz \\
+\]</span> <span class="math display">\[
+\frac{dv}{dt} = ky - uv
+\]</span> <span class="math display">\[
+\frac{dz}{dt} = c -bz \\
+\]</span></p>
+<p>With the basic reproduction number defined for this system as</p>
+<p><span class="math display">\[
+R_0 = \frac{\beta \lambda k}{adu}
+\]</span></p>
+<p>And the basic reproduction number in the presence of an immune response (CTL)</p>
+<p><span class="math display">\[
+R_1 = \frac{\beta \lambda k}{(a +a')du}
+\]</span></p>
+<p>Where:</p>
+<p><span class="math display">\[
+a' = \frac{cp}{b}
+\]</span></p>
+<p>representing the rate at which infected cells are eliminated by the CTL response at equilibrium.</p>
+<p>If R1 &lt;1 then the infection will clear. The virus may spread initially, but once the immune response is activated, each infected cell will on average give rise to less than one newly infected cell and thus the infection will die out.</p>
 
 
+</section>
 <script type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const icon = "";
@@ -209,11 +227,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </main> <!-- /main -->
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./summary.html">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Summary</span></span>
+      <a href="./ch5.html">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dynamics of Hepatitis B Virus</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./summary.html">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
