@@ -4,62 +4,119 @@
     "href": "index.html",
     "title": "Virus Dynamics in R",
     "section": "",
-    "text": "Preface\nThis represents an attempt to write reproduce the code from “Virus Dynamics: Mathematical Principles of Immunology and Virology” by Nowak and May.\nNo guarantees that anything in this is correct, but just an attempt to reproduce what is in the book.\nThis book is written in Rmarkdown and rendered using the phenomenal Quarto engine.\nTo learn more about Quarto books visit https://quarto.org/docs/books."
+    "text": "Preface\nThis is an attempt to reproduce the code from Virus Dynamics: Mathematical Principles of Immunology and Virology by Nowak and May (Nowak and May 2000).\nNo guarantees that anything in this is correct; it is just an attempt to reproduce what is in the book.\nThis book is written in Quarto markdown (.qmd) and rendered using the phenomenal Quarto engine.\nTo learn more about Quarto books visit https://quarto.org/docs/books.\n\n\n\n\nNowak, Martin A., and Robert M. May. 2000. Virus Dynamics: Mathematical Principles of Immunology and Virology. Oxford University Press.",
+    "crumbs": [
+      "Preface"
+    ]
   },
   {
     "objectID": "intro.html",
     "href": "intro.html",
     "title": "1  Introduction",
     "section": "",
-    "text": "This is a book created from markdown and executable code."
+    "text": "This is a book created from markdown and executable code.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
   },
   {
     "objectID": "ch3.html",
     "href": "ch3.html",
     "title": "2  The Basic Model of Virus Dynamics",
     "section": "",
-    "text": "library(deSolve)\nlibrary(tidyverse)\n\nSet Up the ODE\n\nbase_ode <- function(time, state, parameters){\n    with(as.list(c(state, parameters)),{\n        \n        dx <- lambda - d*x - beta * x * v\n        dy <- beta * x * v - a * y\n        dv <- k * y - u * v\n        \n        return(list(c(dx,dy,dv)))\n    })\n    \n}\n\nt <- seq(0,30,.1)\n\nparams <- c(\n    lambda =1e5,# Uninfected cell production rate\n    d = .1, # Cell Death Rate\n    a = .5, # Infected Cell Death Rate\n    beta = 2e-7, # \"Rate Constant\"\n    k = 100, # Virus productin from Infected cell\n    u = 5 # Free Virus lifestapn\n)\n\nGuessing Initial values from a graph\n\nx0 <- params[\"lambda\"][1]/params[\"d\"][1]\ninit <- c(x = unname(x0), \n                    y = 1, v = 1)\n\nout <- ode(init, t, base_ode, params)\n\nout_df <- as_tibble(as.data.frame(out))\n\nFunny side note is that the differences in the scales are almost immediately reproduced as in the book.\n\ncompartment_names <- c(\"Uninfected Cells\",\n\"Infected Cells\",\n\"Free Virus\")\n\np <- out_df %>% \n    setNames(c(\"time\", compartment_names)) %>% \n    gather(compartment, value, -time) %>% \n    mutate(compartment = factor(compartment, compartment_names)) %>% \n    ggplot(aes(time, y = value))+\n    geom_line()+\n    facet_grid(rows = vars(compartment),scales = \"free_y\")+\n    theme_classic()+\n    labs(\n        title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n        x = \"Days\",\n        y = \"Count\"\n    )+\n    scale_y_continuous(labels = scales::comma_format(accuracy = 1000))\n\np"
+    "text": "2.1 Set Up the ODE\nThe basic model of virus dynamics (Nowak and May 2000) tracks three populations: uninfected target cells \\(x\\), infected cells \\(y\\), and free virus particles \\(v\\). Uninfected cells are produced at a constant rate \\(\\lambda\\), die at rate \\(d\\), and become infected on contact with virus at rate \\(\\beta\\). Infected cells die at rate \\(a\\), and each produces free virus at rate \\(k\\), which is in turn cleared at rate \\(u\\).\n\\[\n\\frac{dx}{dt} = \\lambda - dx - \\beta x v\n\\] \\[\n\\frac{dy}{dt} = \\beta x v - a y\n\\] \\[\n\\frac{dv}{dt} = k y - u v\n\\]\nThe basic reproductive ratio of the virus, the average number of newly infected cells arising from one infected cell placed in a fully susceptible cell population, is\n\\[\nR_0 = \\frac{\\beta \\lambda k}{a d u}\n\\]\nThe virus can establish an infection only if \\(R_0 &gt; 1\\).\nbase_ode &lt;- function(time, state, parameters){\n    with(as.list(c(state, parameters)),{\n        \n        dx &lt;- lambda - d*x - beta * x * v\n        dy &lt;- beta * x * v - a * y\n        dv &lt;- k * y - u * v\n        \n        return(list(c(dx,dy,dv)))\n    })\n    \n}\n\nt &lt;- seq(0,30,.1)\n\nparams &lt;- c(\n    lambda =1e5,# Uninfected cell production rate\n    d = .1, # Cell Death Rate\n    a = .5, # Infected Cell Death Rate\n    beta = 2e-7, # \"Rate Constant\"\n    k = 100, # Virus production from infected cell\n    u = 5 # Free virus lifespan\n)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Basic Model of Virus Dynamics</span>"
+    ]
+  },
+  {
+    "objectID": "ch3.html#solve-the-system",
+    "href": "ch3.html#solve-the-system",
+    "title": "2  The Basic Model of Virus Dynamics",
+    "section": "2.2 Solve the System",
+    "text": "2.2 Solve the System\nGuessing initial values from a graph:\n\nx0 &lt;- params[\"lambda\"][1]/params[\"d\"][1]\ninit &lt;- c(x = unname(x0), \n                    y = 1, v = 1)\n\nout &lt;- ode(init, t, base_ode, params)\n\nout_df &lt;- as_tibble(as.data.frame(out))\n\nNote that the differences in the scales across compartments are reproduced almost immediately, as in the book.\n\ncompartment_names &lt;- c(\"Uninfected Cells\",\n\"Infected Cells\",\n\"Free Virus\")\n\np &lt;- out_df %&gt;% \n    setNames(c(\"time\", compartment_names)) %&gt;% \n    gather(compartment, value, -time) %&gt;% \n    mutate(compartment = factor(compartment, compartment_names)) %&gt;% \n    ggplot(aes(time, y = value))+\n    geom_line()+\n    facet_grid(rows = vars(compartment),scales = \"free_y\")+\n    theme_classic()+\n    labs(\n        title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n        x = \"Days\",\n        y = \"Count\"\n    )+\n    scale_y_continuous(labels = scales::comma_format(accuracy = 1000))\n\np   \n\n\n\n\n\n\n\n\n\n\n\n\nNowak, Martin A., and Robert M. May. 2000. Virus Dynamics: Mathematical Principles of Immunology and Virology. Oxford University Press.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>The Basic Model of Virus Dynamics</span>"
+    ]
+  },
+  {
+    "objectID": "ch4.html",
+    "href": "ch4.html",
+    "title": "3  Anti-viral Drug Therapy",
+    "section": "",
+    "text": "3.1 Set Up the ODE\nFrom pages 35-37.\nRepresents infected cells becoming:\nThese dynamics can be represented by the below equations:\n\\[\n\\frac{dx}{dt} = \\lambda - dx - \\beta x v \\\\\n\\] \\[\n\\frac{dy_1}{dt} = q_1 \\beta x v-a_1y_1+\\alpha y_2 \\\\\n\\] \\[\n\\frac{dy_2}{dt} = q_2 \\beta x v-a_2y_2-\\alpha y_2 \\\\\n\\] \\[\n\\frac{dy_3}{dt} = q_3 \\beta x v-a_3y_3 \\\\\n\\] \\[\n\\frac{dv}{dt} = k y_1 - u v\n\\]\nThese equations can then be coded as follows:\nbase_ode &lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    \n    dx &lt;- lambda - d*x - beta * x * v\n    dy1 &lt;- q1*beta * x * v - a1 * y1 + alpha * y2\n    dy2 &lt;- q2*beta * x * v - a2 * y2 - alpha * y2\n    dy3 &lt;- q3*beta * x * v - a3 * y3\n    dv &lt;- k * y1 - u * v\n    \n    return(list(c(dx, dy1, dy2, dy3, dv)))\n  })\n  \n}\nNow we can set up the initial conditions and constants to simulate the outputs from this system of equations.\nt &lt;- seq(0,30,.1)\n\nparams &lt;- c(\n  lambda =1e7,# Uninfected cell production rate\n  d = .1, # Cell Death Rate\n  a1 = .5, # Infected Cell Death Rate\n  a2 = .01, # Infected Cell Death Rate\n  a3 = .008, # Infected Cell Death Rate\n  beta = 5e-10, # \"Rate Constant\"\n  alpha = .3, # Virus Production rate of reactivated latent\n  k = 500, # Virus production from infected cell\n  u = 5, # Free virus lifespan\n  q1 = .55, # P(Infected State | Infected)\n  q2 = .05, # P(Latent State | Infected)\n  q3 = .4 # P(Defective Provirus | Infected)\n)\n\n#' Guessing Initial values from a graph\nx0 &lt;- params[\"lambda\"][1]/params[\"d\"][1]\ninit &lt;- c(x = unname(x0), \n          y1 = 1,y2=0,y3=0, v = 1)\n\nout &lt;- ode(init, t, base_ode, params)\n\nout_df &lt;- as_tibble(as.data.frame(out))\nAs before, the differences in the scales across compartments are reproduced almost immediately, as in the book.\ncompartment_names &lt;- c(\"Uninfected Cells\", \n\"Actively Infected Cells\", \n\"Latently Infected Cells\",\n\"Cells Infected with Defective Virus\",\n\"Free Virus\")\n\np &lt;- out_df %&gt;% \n  setNames(c(\"time\", compartment_names)) %&gt;% \n  gather(compartment, value, -time) %&gt;% \n  mutate(compartment = factor(compartment,\n                              compartment_names)) %&gt;% \n  ggplot(aes(time, y = value))+\n  geom_line()+\n  facet_wrap(~compartment, ncol = 1,scales = \"free_y\")+\n  theme_classic()+\n  labs(\n    title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n    x = \"Days\",\n    y = \"Count\"\n  )+\n  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))+\n  theme(strip.background = element_blank())\n\np",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Anti-viral Drug Therapy</span>"
+    ]
   },
   {
     "objectID": "ch4.html#set-up-the-ode",
     "href": "ch4.html#set-up-the-ode",
     "title": "3  Anti-viral Drug Therapy",
-    "section": "3.1 Set Up the ODE",
-    "text": "Represents infected cells becoming:\n\nLatently infected: do not produce new virions, but contain replication competent virus that can be re-activated to become virus producing\nlong-lived chronic producers: produce small amounts of virus over long periods\ncells which harbor defective provirus\n\nThese dynamics can be represented by the below equations:\n\\[\n\\frac{dx}{dt} = \\lambda - dx - \\beta x v \\\\\n\\] \\[\n\\frac{dy_1}{dt} = q_1 \\beta x v-a_1y_1+\\alpha y_2 \\\\\n\\] \\[\n\\frac{dy_2}{dt} = q_2 \\beta x v-a_2y_2-\\alpha y_2 \\\\\n\\] \\[\n\\frac{dy_3}{dt} = q_3 \\beta x v-a_3y_3 \\\\\n\\] \\[\n\\frac{dv}{dt} = k y_1 - u v\n\\]\nThese equations can then be coded as follows:\n\nbase_ode <- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    \n    dx <- lambda - d*x - beta * x * v\n    dy1 <- q1*beta * x * v - a1 * y1 + alpha * y2\n    dy2 <- q2*beta * x * v - a2 * y2 - alpha * y2\n    dy3 <- q3*beta * x * v - a3 * y3\n    dv <- k * y1 - u * v\n    \n    return(list(c(dx, dy1, dy2, dy3, dv)))\n  })\n  \n}\n\nNow we can set up the initial conditions and constants to simulate the outputs from this system of equations.\n\nt <- seq(0,30,.1)\n\nparams <- c(\n  lambda =1e7,# Uninfected cell production rate\n  d = .1, # Cell Death Rate\n  a1 = .5, # Infected Cell Death Rate\n  a2 = .01, # Infected Cell Death Rate\n  a3 = .008, # Infected Cell Death Rate\n  beta = 5e-10, # \"Rate Constant\"\n  alpha = .3, # Virus Production rate of reactivated latent\n  k = 500, # Virus productin from Infected cell\n  u = 5, # Free Virus lifestapn\n  q1 = .55, # P(Infected State | Infected)\n  q2 = .05, # P(Latent State | Infected)\n  q3 = .4 # P(Defective Provirus | Infected)\n)\n\n#' Guessing Initial values from a graph\nx0 <- params[\"lambda\"][1]/params[\"d\"][1]\ninit <- c(x = unname(x0), \n          y1 = 1,y2=0,y3=0, v = 1)\n\nout <- ode(init, t, base_ode, params)\n\nout_df <- as_tibble(as.data.frame(out))\n\nFunny side note is that the differences in the scales are almost immediately reproduced as in the book.\n\ncompartment_names <- c(\"Uninfected Cells\", \n\"Actively Infected Cells\", \n\"Latently Infected Cells\",\n\"Cells Infected with Defective Virus\",\n\"Free Virus\")\n\np <- out_df %>% \n  setNames(c(\"time\", compartment_names)) %>% \n  gather(compartment, value, -time) %>% \n  mutate(compartment = factor(compartment,\n                              compartment_names)) %>% \n  ggplot(aes(time, y = value))+\n  geom_line()+\n  facet_wrap(~compartment, ncol = 1,scales = \"free_y\")+\n  theme_classic()+\n  labs(\n    title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n    x = \"Days\",\n    y = \"Count\"\n  )+\n  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))+\n  theme(strip.background = element_blank())\n\np   \n\n\n\n\n\n3.1.1 Equilibrium Conditions\n\\[\n\\hat{x} = \\frac{x_0}{R_0} \\\\\n\\] \\[\n\\hat{y_1} = (R_0-1)\\frac{du}{\\beta k} = \\hat{v}\\frac{u}{k} \\\\\n\\] \\[\n\\hat{y_2}=\\frac{\\hat{y_1}\\frac{a_1}{q_1}}{\\frac{\\alpha +a_2}{q_2}+\\frac{\\alpha}{q_1}}\\\\\n\\] \\[\n\\hat{y_3} = \\hat{y_2} \\frac{\\frac{\\alpha + a_2}{q_2}}{\\frac{a_3}{q_3}}\\\\\n\\] \\[\n\\hat{v} = (R_0-1)\\frac{d}{\\beta}\n\\]\nWith \\(R_0\\) given by:\n\\[\nR_0 = \\frac{\\beta \\lambda \\ k}{a_1du}(q_1+q_2 \\frac{\\alpha}{\\alpha + a_2})\n\\]"
+    "section": "",
+    "text": "Latently infected: do not produce new virions, but contain replication competent virus that can be re-activated to become virus producing\nlong-lived chronic producers: produce small amounts of virus over long periods\ncells which harbor defective provirus\n\n\n\n\n\n\n\n\n\n\n3.1.1 Equilibrium Conditions\n\\[\n\\hat{x} = \\frac{x_0}{R_0} \\\\\n\\] \\[\n\\hat{y_1} = (R_0-1)\\frac{du}{\\beta k} = \\hat{v}\\frac{u}{k} \\\\\n\\] \\[\n\\hat{y_2}=\\frac{\\hat{y_1}\\frac{a_1}{q_1}}{\\frac{\\alpha +a_2}{q_2}+\\frac{\\alpha}{q_1}}\\\\\n\\] \\[\n\\hat{y_3} = \\hat{y_2} \\frac{\\frac{\\alpha + a_2}{q_2}}{\\frac{a_3}{q_3}}\\\\\n\\] \\[\n\\hat{v} = (R_0-1)\\frac{d}{\\beta}\n\\]\nWith \\(R_0\\) given by:\n\\[\nR_0 = \\frac{\\beta \\lambda \\ k}{a_1du}(q_1+q_2 \\frac{\\alpha}{\\alpha + a_2})\n\\]",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Anti-viral Drug Therapy</span>"
+    ]
   },
   {
     "objectID": "ch4.html#effect-of-anti-virals",
     "href": "ch4.html#effect-of-anti-virals",
     "title": "3  Anti-viral Drug Therapy",
     "section": "3.2 Effect of Anti-Virals",
-    "text": "The big take-away from these equations is that introduction of an anti-viral should reduce the contact rate, \\(\\beta\\), to zero (or some much lower value).\n\nparams[\"beta\"] <- 0\n\ninit <- c(x = unname(x0), \n          y1 = 1000,y2=1000,y3=10000, v = 50)\n\nout_antiviral <- ode(init, t, base_ode, params)\n\nout_df_av <- as_tibble(as.data.frame(out_antiviral))\n\n\np <- out_df_av %>% \n  setNames(c(\"time\", compartment_names)) %>% \n  gather(compartment, value, -time) %>% \n  mutate(compartment = factor(compartment,\n                              compartment_names)) %>% \n  ggplot(aes(time, y = value))+\n  geom_line()+\n  facet_wrap(~compartment, ncol = 1,scales = \"free_y\")+\n  theme_classic()+\n  labs(\n    title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n    subtitle = \"With Anti-viral therapy\",\n    x = \"Days\",\n    y = \"Count\"\n  )+\n  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))+\n  theme(strip.background = element_blank())\n\np"
+    "text": "3.2 Effect of Anti-Virals\nThe big take-away from these equations is that introduction of an anti-viral should reduce the contact rate, \\(\\beta\\), to zero (or some much lower value).\n\nparams[\"beta\"] &lt;- 0\n\ninit &lt;- c(x = unname(x0), \n          y1 = 1000,y2=1000,y3=10000, v = 50)\n\nout_antiviral &lt;- ode(init, t, base_ode, params)\n\nout_df_av &lt;- as_tibble(as.data.frame(out_antiviral))\n\n\np &lt;- out_df_av %&gt;% \n  setNames(c(\"time\", compartment_names)) %&gt;% \n  gather(compartment, value, -time) %&gt;% \n  mutate(compartment = factor(compartment,\n                              compartment_names)) %&gt;% \n  ggplot(aes(time, y = value))+\n  geom_line()+\n  facet_wrap(~compartment, ncol = 1,scales = \"free_y\")+\n  theme_classic()+\n  labs(\n    title = \"Viral Dynamics of Primary Phase of HIV or SIV Infection\",\n    subtitle = \"With Anti-viral therapy\",\n    x = \"Days\",\n    y = \"Count\"\n  )+\n  scale_y_continuous(labels = scales::comma_format(accuracy = 1000))+\n  theme(strip.background = element_blank())\n\np",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Anti-viral Drug Therapy</span>"
+    ]
   },
   {
     "objectID": "ch5.html",
     "href": "ch5.html",
     "title": "4  Dynamics of Hepatitis B Virus",
     "section": "",
-    "text": "More to come."
+    "text": "More to come.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Dynamics of Hepatitis B Virus</span>"
+    ]
   },
   {
-    "objectID": "ch6.html#predatory-prey-dynamics-of-the-immune-system",
-    "href": "ch6.html#predatory-prey-dynamics-of-the-immune-system",
+    "objectID": "ch6.html",
+    "href": "ch6.html",
     "title": "5  Dynamics of Immune Response",
-    "section": "5.1 Predatory Prey Dynamics of the Immune System",
-    "text": "\\[\n\\frac{dx}{dt} = \\lambda - dx - \\beta x v \n\\] \\[\n\\frac{dy}{dt} = \\beta x v - ay - pyz \\\\\n\\] \\[\n\\frac{dv}{dt} = ky - uv\n\\] \\[\n\\frac{dz}{dt} = c -bz \\\\\n\\]\nWith the basic reproduction number defined for this system as\n\\[\nR_0 = \\frac{\\beta \\lambda k}{adu}\n\\]\nAnd the basic reproduction number in the presence of an immune response (CTL)\n\\[\nR_1 = \\frac{\\beta \\lambda k}{(a +a')du}\n\\]\nWhere:\n\\[\na' = \\frac{cp}{b}\n\\]\nrepresenting the rate at which infected cells are eliminated by the CTL response at equilibrium.\nIf R1 <1 then the infection will clear. The virus may spread initially, but once the immune response is activated, each infected cell will on average give rise to less than one newly infected cell and thus the infection will die out."
+    "section": "",
+    "text": "5.1 Predator-Prey Dynamics of the Immune System\nNowak and May (Nowak and May 2000) argue that:\nWe extend the basic model with a cytotoxic T lymphocyte (CTL) response \\(z\\), which kills infected cells at rate \\(p\\). In the simplest case the CTL are produced at a constant rate \\(c\\) and decay at rate \\(b\\), independent of antigen.\n\\[\n\\frac{dx}{dt} = \\lambda - dx - \\beta x v\n\\] \\[\n\\frac{dy}{dt} = \\beta x v - ay - pyz \\\\\n\\] \\[\n\\frac{dv}{dt} = ky - uv\n\\] \\[\n\\frac{dz}{dt} = c -bz \\\\\n\\]\nWith the basic reproduction number defined for this system as\n\\[\nR_0 = \\frac{\\beta \\lambda k}{adu}\n\\]\nAnd the basic reproduction number in the presence of an immune response (CTL)\n\\[\nR_1 = \\frac{\\beta \\lambda k}{(a +a')du}\n\\]\nWhere:\n\\[\na' = \\frac{cp}{b}\n\\]\nrepresenting the rate at which infected cells are eliminated by the CTL response at equilibrium.\nIf \\(R_1 &lt; 1\\) then the infection will clear. The virus may spread initially, but once the immune response is activated, each infected cell will on average give rise to less than one newly infected cell and thus the infection will die out.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Dynamics of Immune Response</span>"
+    ]
+  },
+  {
+    "objectID": "ch6.html#simulating-the-immune-response",
+    "href": "ch6.html#simulating-the-immune-response",
+    "title": "5  Dynamics of Immune Response",
+    "section": "5.2 Simulating the Immune Response",
+    "text": "5.2 Simulating the Immune Response\n\nlibrary(deSolve)\nlibrary(tidyverse)\n\nWe code the four-compartment system and reuse the contact and replication parameters from the basic model, adding the CTL killing rate \\(p\\), production rate \\(c\\), and decay rate \\(b\\).\n\nimmune_ode &lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n\n    dx &lt;- lambda - d * x - beta * x * v\n    dy &lt;- beta * x * v - a * y - p * y * z\n    dv &lt;- k * y - u * v\n    dz &lt;- c - b * z\n\n    return(list(c(dx, dy, dv, dz)))\n  })\n}\n\nt &lt;- seq(0, 30, .1)\n\nparams &lt;- c(\n  lambda = 1e5, # Uninfected cell production rate\n  d = .1,       # Cell death rate\n  a = .5,       # Infected cell death rate\n  beta = 2e-7,  # Rate constant\n  k = 100,      # Virus production from infected cell\n  u = 5,        # Free virus lifespan\n  p = 1,        # CTL killing rate\n  c = .1,       # CTL production rate\n  b = .05       # CTL decay rate\n)\n\nThe constant-production assumption gives an equilibrium CTL level of \\(\\hat{z} = c/b\\), so we can compute the two reproductive ratios directly and confirm that the immune response lowers, but does not here eliminate, viral spread.\n\na_prime &lt;- with(as.list(params), c * p / b)\n\nR0 &lt;- with(as.list(params), beta * lambda * k / (a * d * u))\nR1 &lt;- with(as.list(params), beta * lambda * k / ((a + a_prime) * d * u))\n\nc(R0 = R0, R1 = R1)\n\n R0  R1 \n8.0 1.6 \n\n\n\nx0 &lt;- unname(params[\"lambda\"] / params[\"d\"])\ninit &lt;- c(x = x0, y = 1, v = 1, z = unname(params[\"c\"] / params[\"b\"]))\n\nout &lt;- ode(init, t, immune_ode, params)\nout_df &lt;- as_tibble(as.data.frame(out))\n\n\ncompartment_names &lt;- c(\"Uninfected Cells\",\n                       \"Infected Cells\",\n                       \"Free Virus\",\n                       \"CTL Response\")\n\np_plot &lt;- out_df %&gt;%\n  setNames(c(\"time\", compartment_names)) %&gt;%\n  gather(compartment, value, -time) %&gt;%\n  mutate(compartment = factor(compartment, compartment_names)) %&gt;%\n  ggplot(aes(time, y = value)) +\n  geom_line() +\n  facet_wrap(~compartment, ncol = 1, scales = \"free_y\") +\n  theme_classic() +\n  labs(\n    title = \"Viral Dynamics with a CTL Immune Response\",\n    x = \"Days\",\n    y = \"Count\"\n  ) +\n  scale_y_continuous(labels = scales::comma_format(accuracy = 1)) +\n  theme(strip.background = element_blank())\n\np_plot\n\n\n\n\n\n\n\n\n\n\n\n\nNowak, Martin A., and Robert M. May. 2000. Virus Dynamics: Mathematical Principles of Immunology and Virology. Oxford University Press.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Dynamics of Immune Response</span>"
+    ]
   },
   {
     "objectID": "summary.html",
     "href": "summary.html",
     "title": "6  Summary",
     "section": "",
-    "text": "In summary, there will be more to come."
+    "text": "In summary, there will be more to come.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Summary</span>"
+    ]
   },
   {
     "objectID": "references.html",
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": ""
+    "text": "Nowak, Martin A., and Robert M. May. 2000. Virus Dynamics:\nMathematical Principles of Immunology and Virology. Oxford\nUniversity Press.",
+    "crumbs": [
+      "References"
+    ]
   }
 ]
