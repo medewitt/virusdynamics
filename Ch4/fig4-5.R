@@ -36,8 +36,8 @@ params <- c(
   a3 = .008, # Infected Cell Death Rate
   beta = 5e-10, # "Rate Constant"
   alpha = .3, # Virus Production rate of reactivated latent
-  k = 500, # Virus productin from Infected cell
-  u = 5, # Free Virus lifestapn
+  k = 500, # Virus production from infected cell
+  u = 5, # Free virus lifespan
   q1 = .55, # P(Infected State | Infected)
   q2 = .05, # P(Latent State | Infected)
   q3 = .4 # P(Defective Provirus | Infected)

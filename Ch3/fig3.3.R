@@ -24,8 +24,8 @@ params <- c(
 	d = .1, # Cell Death Rate
 	a = .5, # Infected Cell Death Rate
 	beta = 2e-7, # "Rate Constant"
-	k = 100, # Virus productin from Infected cell
-	u = 5 # Free Virus lifestapn
+	k = 100, # Virus production from infected cell
+	u = 5 # Free virus lifespan
 )
 
 #' Guessing Initial values from a graph
