@@ -1,3 +1,16 @@
-imports:
-  tidyverse,
-  deSolve
+Package: virusdynamics
+Title: Reproducing "Virus Dynamics" by Nowak and May in R
+Version: 0.0.0.9000
+Authors@R:
+    person("Michael", "DeWitt", email = "me.dewitt.jr@gmail.com", role = c("aut", "cre"))
+Description: A Quarto book reproducing the models and figures from
+    "Virus Dynamics: Mathematical Principles of Immunology and Virology"
+    by Nowak and May.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Imports:
+    deSolve,
+    tidyverse,
+    scales,
+    cowplot,
+    here

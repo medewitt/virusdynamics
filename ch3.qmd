@@ -1,4 +1,4 @@
-# The Basic Model of Virus Dynamics 
+# The Basic Model of Virus Dynamics
 
 ```{r }
 #| message: false
@@ -7,7 +7,27 @@ library(deSolve)
 library(tidyverse)
 ```
 
-Set Up the ODE
+The basic model of virus dynamics [@nowak2000] tracks three populations: uninfected target cells $x$, infected cells $y$, and free virus particles $v$. Uninfected cells are produced at a constant rate $\lambda$, die at rate $d$, and become infected on contact with virus at rate $\beta$. Infected cells die at rate $a$, and each produces free virus at rate $k$, which is in turn cleared at rate $u$.
+
+$$
+\frac{dx}{dt} = \lambda - dx - \beta x v
+$$
+$$
+\frac{dy}{dt} = \beta x v - a y
+$$
+$$
+\frac{dv}{dt} = k y - u v
+$$
+
+The basic reproductive ratio of the virus, the average number of newly infected cells arising from one infected cell placed in a fully susceptible cell population, is
+
+$$
+R_0 = \frac{\beta \lambda k}{a d u}
+$$
+
+The virus can establish an infection only if $R_0 > 1$.
+
+## Set Up the ODE
 
 ```{r }
 base_ode <- function(time, state, parameters){
@@ -29,12 +49,14 @@ params <- c(
 	d = .1, # Cell Death Rate
 	a = .5, # Infected Cell Death Rate
 	beta = 2e-7, # "Rate Constant"
-	k = 100, # Virus productin from Infected cell
-	u = 5 # Free Virus lifestapn
+	k = 100, # Virus production from infected cell
+	u = 5 # Free virus lifespan
 )
 ```
 
-Guessing Initial values from a graph
+## Solve the System
+
+Guessing initial values from a graph:
 
 ```{r }
 x0 <- params["lambda"][1]/params["d"][1]
@@ -46,7 +68,7 @@ out <- ode(init, t, base_ode, params)
 out_df <- as_tibble(as.data.frame(out))
 ```
 
-Funny side note is that the differences in the scales are almost immediately reproduced as in the book.
+Note that the differences in the scales across compartments are reproduced almost immediately, as in the book.
 
 ```{r }
 

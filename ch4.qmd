@@ -68,8 +68,8 @@ params <- c(
   a3 = .008, # Infected Cell Death Rate
   beta = 5e-10, # "Rate Constant"
   alpha = .3, # Virus Production rate of reactivated latent
-  k = 500, # Virus productin from Infected cell
-  u = 5, # Free Virus lifestapn
+  k = 500, # Virus production from infected cell
+  u = 5, # Free virus lifespan
   q1 = .55, # P(Infected State | Infected)
   q2 = .05, # P(Latent State | Infected)
   q3 = .4 # P(Defective Provirus | Infected)
@@ -85,7 +85,7 @@ out <- ode(init, t, base_ode, params)
 out_df <- as_tibble(as.data.frame(out))
 ```
 
-Funny side note is that the differences in the scales are almost immediately reproduced as in the book.
+As before, the differences in the scales across compartments are reproduced almost immediately, as in the book.
 
 ```{r}
 compartment_names <- c("Uninfected Cells", 
